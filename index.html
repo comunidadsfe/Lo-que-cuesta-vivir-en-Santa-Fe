@@ -78,8 +78,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .pdf-viewer { width: 100%; height: 250px; border: 2px solid #f0f0f0; border-radius: 10px; margin-bottom: 15px; }
+        .pdf-viewer { width: 100%; height: 350px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
         .btn-download { background: var(--comunidad-fucsia); color: white; text-decoration: none; padding: 12px 15px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; text-align: center; width: 90%; }
     </style>
 </head>
@@ -156,20 +157,23 @@
 <div class="informes-section">
     <h3>¿Querés saber cómo calculamos estos datos? Leé nuestros informes.</h3>
     <div class="informes-grid">
+        <!-- Informe Tarifas -->
         <div class="informe-card">
             <strong>Informe Tarifas</strong>
-            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf"></iframe>
-            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf" download class="btn-download">Descargar PDF</a>
+            <iframe class="pdf-viewer" src="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf&embedded=true"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf" target="_blank" class="btn-download">Descargar PDF</a>
         </div>
+        <!-- Informe Prepagas -->
         <div class="informe-card">
             <strong>Informe Prepagas</strong>
-            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf"></iframe>
-            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf" download class="btn-download">Descargar PDF</a>
+            <iframe class="pdf-viewer" src="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf&embedded=true"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf" target="_blank" class="btn-download">Descargar PDF</a>
         </div>
+        <!-- Informe Alquileres (Nombre actualizado) -->
         <div class="informe-card">
             <strong>Informe Alquileres</strong>
-            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres.pdf"></iframe>
-            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres.pdf" download class="btn-download">Descargar PDF</a>
+            <iframe class="pdf-viewer" src="https://docs.google.com/viewer?url=https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres%20COMUNIDAD.pdf&embedded=true"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres%20COMUNIDAD.pdf" target="_blank" class="btn-download">Descargar PDF</a>
         </div>
     </div>
 </div>
@@ -187,28 +191,33 @@
         const ingresoLimpio = document.getElementById('ingreso').value.replace(/\./g, "");
         const ingreso = parseFloat(ingresoLimpio) || 0;
         const tarifasInput = document.getElementById('tarifas').value;
-
-        if (ingreso <= 0 || tarifasInput === "") {
-            alert("Ingresa tus ingresos y selecciona una tarifa.");
-            return;
-        }
-
-        const gastos = parseFloat(document.getElementById('alquiler').value) +
-                       parseFloat(tarifasInput) +
-                       parseFloat(document.getElementById('prepaga').value) +
-                       ((parseFloat(document.getElementById('nafta').value) || 0) * 1850) +
-                       ((parseFloat(document.getElementById('colectivo').value) || 0) * 1720);
-
+        if (ingreso <= 0 || tarifasInput === "") { alert("Ingresa tus ingresos y selecciona una tarifa."); return; }
+        const gastos = parseFloat(document.getElementById('alquiler').value) + parseFloat(tarifasInput) + parseFloat(document.getElementById('prepaga').value) + ((parseFloat(document.getElementById('nafta').value) || 0) * 1850) + ((parseFloat(document.getElementById('colectivo').value) || 0) * 1720);
         const saldo = ingreso - gastos;
         const porc = (saldo / ingreso) * 100;
-
-        const placa = document.getElementById('placa-resultado');
-        placa.style.display = 'block';
+        document.getElementById('placa-resultado').style.display = 'block';
         document.getElementById('btn-descargar').style.display = 'block';
-
         if (saldo >= 0) {
             document.getElementById('placa-titulo').innerText = "Te quedan";
             document.getElementById('placa-monto').innerText = formato.format(saldo);
             document.getElementById('placa-porc').innerText = "Te queda el " + porc.toFixed(1) + "% de tus ingresos";
         } else {
-            document.getElementById('placa-titulo').innerText = "Déficit mensual
+            document.getElementById('placa-titulo').innerText = "Déficit mensual";
+            document.getElementById('placa-monto').innerText = formato.format(Math.abs(saldo));
+            document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
+        }
+        document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function descargarPlaca() {
+        const placa = document.getElementById('placa-resultado');
+        html2canvas(placa, { scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'mi-presupuesto.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    }
+</script>
+</body>
+</html>
