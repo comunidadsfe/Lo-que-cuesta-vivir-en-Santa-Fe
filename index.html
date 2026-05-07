@@ -8,12 +8,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --comunidad-violeta: #3D1488; /* Fondo image_0.png */
-            --comunidad-fucsia: #EF3C6B; /* Texto image_0.png */
+            --comunidad-violeta: #3D1488;
+            --comunidad-fucsia: #EF3C6B;
             --bg-page: var(--comunidad-violeta);
             --bg-container: #FFFFFF;
-            --text-main: #212529;
-            --text-light: #6c757d;
         }
 
         body { 
@@ -27,24 +25,23 @@
             min-height: 100vh;
         }
 
-        /* HEADER CON LOGO DE AGRUPACIÓN */
         .main-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             width: 100%;
             max-width: 480px;
         }
         .main-header img {
-            max-width: 250px; /* Tamaño del logo arriba */
+            max-width: 150px;
             height: auto;
             margin-bottom: 15px;
+            border-radius: 15px;
         }
         .main-header h1 {
             color: white;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
             margin: 0;
         }
 
@@ -59,29 +56,17 @@
             margin-bottom: 50px;
         }
 
-        h2 { 
-            text-align: center; 
-            color: var(--comunidad-violeta); 
-            margin-bottom: 30px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            font-size: 1.1rem; 
-            line-height: 1.3;
-        }
+        h2 { text-align: center; color: var(--comunidad-violeta); margin-bottom: 30px; font-weight: 800; text-transform: uppercase; font-size: 1rem; }
 
-        /* Estilos de inputs y botones (manteniendo la estética) */
         .field { margin-bottom: 20px; }
         label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--comunidad-violeta); }
         input, select { width: 100%; padding: 14px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        input:focus, select:focus { border-color: var(--comunidad-fucsia); outline: none; }
         
         .button-group { display: flex; gap: 12px; margin-top: 20px; }
-        button { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; font-family: 'Montserrat', sans-serif;}
+        button { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-family: 'Montserrat', sans-serif;}
         .btn-calc { background-color: var(--comunidad-fucsia); color: white; }
-        .btn-calc:hover { background-color: var(--comunidad-violeta); transform: translateY(-2px); }
         .btn-reset { background-color: #495057; color: white; }
 
-        /* PLACA DE RESULTADO CON LOGO INTEGRADO */
         #placa-resultado {
             display: none;
             margin-top: 30px;
@@ -91,55 +76,38 @@
             background-color: var(--comunidad-violeta); 
             color: white;
             border: 5px solid var(--comunidad-fucsia); 
-            position: relative; /* Para posicionar el logo dentro */
         }
-        .placa-titulo { font-weight: 800; text-transform: uppercase; font-size: 1rem; letter-spacing: 2px; margin-bottom: 5px; }
         .placa-monto { font-size: 3rem; font-weight: 800; color: var(--comunidad-fucsia); margin: 10px 0; }
-        .placa-porc { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
-        
-        /* FOOTER DE LA PLACA CON LOGO */
         .placa-footer { 
-            font-size: 0.9rem; 
             margin-top: 30px; 
-            border-top: 2px solid rgba(255,255,255,0.1); 
-            padding-top: 15px; 
+            border-top: 1px solid rgba(255,255,255,0.2); 
+            padding-top: 20px; 
             display: flex;
             justify-content: space-between;
             align-items: center;
-            text-align: left;
         }
-        .placa-logo-small {
-            max-width: 90px; /* Tamaño del logo en la placa */
-            height: auto;
-        }
-        .placa-creditos {
-            text-transform: uppercase;
-            font-weight: 800;
-            font-size: 0.8rem;
-            color: white;
-        }
+        .placa-logo-small { max-width: 60px; height: auto; }
+        .placa-creditos { text-transform: uppercase; font-weight: 800; font-size: 0.7rem; color: white; text-align: right; }
 
-        #btn-descargar { display: none; width: 100%; background-color: var(--comunidad-fucsia); color: white; margin-top: 20px; padding: 16px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        #btn-descargar { display: none; width: 100%; background-color: var(--comunidad-fucsia); color: white; margin-top: 20px; padding: 16px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-family: 'Montserrat', sans-serif;}
 
-        /* Sección de Informes (se mantiene igual) */
         .informes-section { max-width: 1000px; width: 100%; text-align: center; color: white; padding-bottom: 60px; }
-        .informes-section h3 { font-size: 1.3rem; margin-bottom: 30px; font-weight: 600; }
+        .informes-section h3 { font-size: 1.2rem; margin-bottom: 30px; font-weight: 600; padding: 0 15px; }
         .informes-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .informe-card { background: white; color: var(--comunidad-violeta); padding: 25px; border-radius: 20px; flex: 1; min-width: 280px; max-width: 320px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .pdf-viewer { width: 100%; height: 350px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
+        .pdf-viewer { width: 100%; height: 300px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
         .btn-download { background: var(--comunidad-fucsia); color: white; text-decoration: none; padding: 12px 15px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; text-align: center; width: 90%; }
-        optgroup { color: var(--comunidad-violeta); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header class="main-header">
-    <img src="Logo Comunidad_Con Fondo_Morado.jpg.jpeg" alt="Logo Comunidad">
+    <img src="Informes/Logo%20Comunidad_Con%20Fondo%20Morado.jpg.jpeg" alt="Comunidad">
     <h1>¿Cuánto cuesta vivir en Santa Fe?</h1>
 </header>
 
 <div class="container">
-    <h2>Calculadora de Costo de Vida: Comunidad</h2>
+    <h2>Herramienta de Comunidad</h2>
 
     <div class="field">
         <label>Ingresos Mensuales ($)</label>
@@ -172,16 +140,12 @@
         <label>Prepaga</label>
         <select id="prepaga">
             <option value="0">No tengo / Obra Social</option>
-            <optgroup label="Planes Individuales">
-                <option value="106000">Individual: Económica</option>
-                <option value="121916">Individual: Media</option>
-                <option value="144000">Individual: Alta</option>
-            </optgroup>
-            <optgroup label="Planes Familiares">
-                <option value="385454">Familiar: Económica</option>
-                <option value="500463">Familiar: Media</option>
-                <option value="764223">Familiar: Alta</option>
-            </optgroup>
+            <option value="106000">Indiv. Económica</option>
+            <option value="121916">Indiv. Media</option>
+            <option value="144000">Indiv. Alta</option>
+            <option value="385454">Fam. Económica</option>
+            <option value="500463">Fam. Media</option>
+            <option value="764223">Fam. Alta</option>
         </select>
     </div>
 
@@ -201,12 +165,11 @@
     </div>
 
     <div id="placa-resultado">
-        <div id="placa-titulo" class="placa-titulo"></div>
+        <div id="placa-titulo" class="placa-titulo" style="font-weight: 800; text-transform: uppercase;"></div>
         <div id="placa-monto" class="placa-monto"></div>
-        <div id="placa-porc" class="placa-porc"></div>
-        
+        <div id="placa-porc" style="font-weight: 600; margin-bottom: 20px;"></div>
         <div class="placa-footer">
-            <img src="Logo Comunidad_Con Fondo_Morado.jpg.jpeg" alt="Logo Comunidad" class="placa-logo-small">
+            <img src="Informes/Logo%20Comunidad_Con%20Fondo%20Morado.jpg.jpeg" alt="Logo" class="placa-logo-small">
             <div class="placa-creditos">No era la casta, eras vos</div>
         </div>
     </div>
@@ -248,7 +211,7 @@
         const ingresoLimpio = document.getElementById('ingreso').value.replace(/\./g, "");
         const ingreso = parseFloat(ingresoLimpio) || 0;
         const tarifasInput = document.getElementById('tarifas').value;
-        if (ingreso <= 0 || tarifasInput === "") { alert("Ingresa tus ingresos y selecciona una tarifa."); return; }
+        if (ingreso <= 0 || tarifasInput === "") { alert("Ingresa tus ingresos."); return; }
         const gastos = parseFloat(document.getElementById('alquiler').value) + parseFloat(tarifasInput) + parseFloat(document.getElementById('prepaga').value) + ((parseFloat(document.getElementById('nafta').value) || 0) * 1850) + ((parseFloat(document.getElementById('colectivo').value) || 0) * 1720);
         const saldo = ingreso - gastos;
         const porc = (saldo / ingreso) * 100;
@@ -268,13 +231,9 @@
 
     function descargarPlaca() {
         const placa = document.getElementById('placa-resultado');
-        html2canvas(placa, { 
-            scale: 2,
-            useCORS: true, /* Necesario para cargar el logo en la imagen */
-            allowTaint: true
-        }).then(canvas => {
+        html2canvas(placa, { scale: 2, useCORS: true }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'presupuesto-comunidad.png';
+            link.download = 'mi-presupuesto-comunidad.png';
             link.href = canvas.toDataURL("image/png");
             link.click();
         });
