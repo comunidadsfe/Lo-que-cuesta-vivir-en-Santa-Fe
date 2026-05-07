@@ -104,7 +104,7 @@
 <body>
 
 <header class="main-header">
-    <img src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Logo%20Comunidad_Con%20Fondo%20Morado.jpg.jpeg" alt="Comunidad">
+    <img src="Informes/logo.jpg" alt="Comunidad">
     <h1>¿Cuánto cuesta vivir en Santa Fe?</h1>
 </header>
 
@@ -171,7 +171,7 @@
         <div id="placa-monto" class="placa-monto"></div>
         <div id="placa-porc" style="font-weight: 600; margin-bottom: 20px;"></div>
         <div class="placa-footer">
-            <img src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Logo%20Comunidad_Con%20Fondo%20Morado.jpg.jpeg" alt="Logo" class="placa-logo-small">
+            <img src="Informes/logo.jpg" alt="Logo" class="placa-logo-small">
             <div class="placa-creditos">No era la casta, eras vos</div>
         </div>
     </div>
@@ -213,7 +213,7 @@
         const ingresoLimpio = document.getElementById('ingreso').value.replace(/\./g, "");
         const ingreso = parseFloat(ingresoLimpio) || 0;
         const tarifasInput = document.getElementById('tarifas').value;
-        if (ingreso <= 0 || tarifasInput === "") { alert("Ingresa tus ingresos mensualmente."); return; }
+        if (ingreso <= 0 || tarifasInput === "") { alert("Ingresa tus ingresos."); return; }
         const gastos = parseFloat(document.getElementById('alquiler').value) + parseFloat(tarifasInput) + parseFloat(document.getElementById('prepaga').value) + ((parseFloat(document.getElementById('nafta').value) || 0) * 1850) + ((parseFloat(document.getElementById('colectivo').value) || 0) * 1720);
         const saldo = ingreso - gastos;
         const porc = (saldo / ingreso) * 100;
