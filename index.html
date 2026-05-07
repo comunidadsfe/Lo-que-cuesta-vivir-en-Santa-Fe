@@ -3,47 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Gastos Mensuales</title>
+    <title>¿Cuánto cuesta vivir en Santa Fe?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --primary-color: #0d6efd;
-            --success-color: #198754;
-            --danger-color: #dc3545;
-            --bg-body: #f0f2f5;
+            --comunidad-violeta: #3D1488;
+            --comunidad-fucsia: #EF3C6B;
+            --bg-page: var(--comunidad-violeta);
+            --bg-container: #FFFFFF;
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); padding: 20px; color: #212529; line-height: 1.6; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: var(--primary-color); margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
-        .field { margin-bottom: 18px; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; color: #495057; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        input:focus, select:focus { border-color: var(--primary-color); outline: none; }
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg-page); 
+            padding: 20px; 
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 480px; 
+            width: 100%;
+            background: var(--bg-container); 
+            padding: 35px; 
+            border-radius: 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            box-sizing: border-box;
+            margin-bottom: 50px;
+        }
+
+        h2 { text-align: center; color: var(--comunidad-violeta); margin-bottom: 30px; font-weight: 800; text-transform: uppercase; font-size: 1.3rem; line-height: 1.2; }
+
+        .field { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--comunidad-violeta); }
+        input, select { width: 100%; padding: 14px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 16px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         
-        .button-group { display: flex; gap: 10px; margin-top: 15px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-calc { background-color: var(--primary-color); color: white; }
-        .btn-reset { background-color: #6c757d; color: white; }
-        #share-btn { width: 100%; background-color: #25d366; color: white; margin-top: 15px; display: none; }
-        
-        .res-box { margin-top: 25px; padding: 20px; border-radius: 15px; display: none; text-align: center; border: 1px solid transparent; }
-        .pos { background-color: #e6f4ea; border-color: #34a853; color: #137333; }
-        .neg { background-color: #fce8e6; border-color: #ea4335; color: #c5221f; }
-        
-        .progress-container { width: 100%; background-color: rgba(0,0,0,0.1); border-radius: 10px; margin: 15px 0; height: 20px; overflow: hidden; }
-        .progress-bar { height: 100%; transition: width 0.8s ease; width: 0%; }
-        
-        .info-nota { font-size: 0.8em; color: #6c757d; margin-top: 4px; font-style: italic; }
-        optgroup { color: var(--primary-color); font-weight: bold; }
+        .button-group { display: flex; gap: 12px; margin-top: 20px; }
+        button { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-family: 'Montserrat', sans-serif;}
+        .btn-calc { background-color: var(--comunidad-fucsia); color: white; }
+        .btn-calc:hover { background-color: var(--comunidad-violeta); transform: translateY(-2px); }
+        .btn-reset { background-color: #495057; color: white; }
+
+        #placa-resultado {
+            display: none;
+            margin-top: 30px;
+            padding: 50px 30px;
+            border-radius: 20px;
+            text-align: center;
+            background-color: var(--comunidad-violeta); 
+            color: white;
+            border: 5px solid var(--comunidad-fucsia); 
+        }
+        .placa-monto { font-size: 3rem; font-weight: 800; color: var(--comunidad-fucsia); margin: 15px 0; }
+        .placa-footer { font-size: 1.1rem; margin-top: 35px; border-top: 2px solid rgba(255,255,255,0.1); padding-top: 20px; font-weight: 800; text-transform: uppercase; }
+
+        #btn-descargar { display: none; width: 100%; background-color: var(--comunidad-fucsia); color: white; margin-top: 20px; padding: 16px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+
+        .informes-section { max-width: 1000px; width: 100%; text-align: center; color: white; padding-bottom: 60px; }
+        .informes-section h3 { font-size: 1.3rem; margin-bottom: 30px; font-weight: 600; }
+        .informes-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+        .informe-card {
+            background: white;
+            color: var(--comunidad-violeta);
+            padding: 25px;
+            border-radius: 20px;
+            flex: 1;
+            min-width: 280px;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pdf-viewer { width: 100%; height: 250px; border: 2px solid #f0f0f0; border-radius: 10px; margin-bottom: 15px; }
+        .btn-download { background: var(--comunidad-fucsia); color: white; text-decoration: none; padding: 12px 15px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; text-align: center; width: 90%; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Mi Presupuesto</h2>
+    <h2>¿Cuánto cuesta vivir en Santa Fe?</h2>
 
     <div class="field">
-        <label>Tus Ingresos Mensuales ($)</label>
-        <input type="number" id="ingreso" placeholder="Monto total en pesos">
+        <label>Ingresos Mensuales ($)</label>
+        <input type="text" id="ingreso" placeholder="Ej: 1.000.000" oninput="formatearMonto(this)">
     </div>
 
     <div class="field">
@@ -58,84 +105,94 @@
     </div>
 
     <div class="field">
-        <label>Tarifas (Luz, Gas y Agua)</label>
+        <label>Tarifas (Luz, Gas, Agua)</label>
         <select id="tarifas">
-            <!-- OPCIÓN POR DEFECTO SIN VALOR -->
-            <option value="" disabled selected>Selecciona tu situación tarifaria</option>
+            <option value="" disabled selected>Selecciona tu situación</option>
             <option value="141722.99">Con subsidios consumo medio</option>
             <option value="181337.99">Sin subsidios consumo medio</option>
             <option value="186886.99">Con subsidios consumo medio/alto</option>
             <option value="214289.99">Sin subsidios consumo medio/alto</option>
         </select>
-        <div class="info-nota">* Electricidad, gas natural y agua según consumo promedio.</div>
     </div>
 
     <div class="field">
-        <label>Cobertura Médica (Prepaga)</label>
+        <label>Prepaga</label>
         <select id="prepaga">
             <option value="0">No tengo / Obra Social</option>
-            <optgroup label="Planes Individuales">
-                <option value="106000">Individual: Opción económica</option>
-                <option value="121916">Individual: Opción media</option>
-                <option value="144000">Individual: Opción alta</option>
-            </optgroup>
-            <optgroup label="Planes Familiares">
-                <option value="385454">Familiar: Opción económica</option>
-                <option value="500463">Familiar: Opción media</option>
-                <option value="764223">Familiar: Opción alta</option>
-            </optgroup>
+            <option value="106000">Indiv. Económica</option>
+            <option value="121916">Indiv. Media</option>
+            <option value="144000">Indiv. Alta</option>
+            <option value="385454">Fam. Económica</option>
+            <option value="500463">Fam. Media</option>
+            <option value="764223">Fam. Alta</option>
         </select>
     </div>
 
     <div class="field">
-        <label>Litros de Nafta (al mes)</label>
-        <input type="number" id="nafta" placeholder="Ej: 40">
-        <div class="info-nota">* Litro a $1.850</div>
+        <label>Nafta (Litros/Mes)</label>
+        <input type="number" id="nafta" placeholder="Cantidad">
     </div>
 
     <div class="field">
-        <label>Boletos de Colectivo (al mes)</label>
-        <input type="number" id="colectivo" placeholder="Ej: 20">
-        <div class="info-nota">* Boleto a $1.720</div>
+        <label>Colectivo (Boletos/Mes)</label>
+        <input type="number" id="colectivo" placeholder="Cantidad">
     </div>
 
     <div class="button-group">
         <button class="btn-calc" onclick="calcular()">Calcular</button>
-        <button class="btn-reset" onclick="reiniciar()">Reiniciar</button>
+        <button class="btn-reset" onclick="location.reload()">Reiniciar</button>
     </div>
 
-    <div id="resultado" class="res-box">
-        <div id="monto-final" style="font-size: 1.8em; font-weight: bold;"></div>
-        <div id="porcentaje-texto" style="margin: 10px 0; font-weight: 600;"></div>
-        
-        <div class="progress-container">
-            <div id="barra" class="progress-bar"></div>
-        </div>
+    <div id="placa-resultado">
+        <div id="placa-titulo" class="placa-titulo"></div>
+        <div id="placa-monto" class="placa-monto"></div>
+        <div id="placa-porc" class="placa-porc"></div>
+        <div class="placa-footer">No era la casta, eras vos</div>
+    </div>
 
-        <div id="desglose" style="font-size: 0.9em; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;"></div>
-        <button id="share-btn" onclick="compartir()">Compartir Resultado 🔗</button>
+    <button id="btn-descargar" onclick="descargarPlaca()">Descargar Placa 📸</button>
+</div>
+
+<div class="informes-section">
+    <h3>¿Querés saber cómo calculamos estos datos? Leé nuestros informes.</h3>
+    <div class="informes-grid">
+        <div class="informe-card">
+            <strong>Informe Tarifas</strong>
+            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Tarifas.pdf" download class="btn-download">Descargar PDF</a>
+        </div>
+        <div class="informe-card">
+            <strong>Informe Prepagas</strong>
+            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Prepagas%20y%20Medicamentos.pdf" download class="btn-download">Descargar PDF</a>
+        </div>
+        <div class="informe-card">
+            <strong>Informe Alquileres</strong>
+            <iframe class="pdf-viewer" src="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres.pdf"></iframe>
+            <a href="https://raw.githubusercontent.com/nicolovaisa/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/Informe%20Alquileres.pdf" download class="btn-download">Descargar PDF</a>
+        </div>
     </div>
 </div>
 
 <script>
     const formato = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
-    let textoGlobal = "";
+
+    function formatearMonto(input) {
+        let valor = input.value.replace(/\D/g, "");
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        input.value = valor;
+    }
 
     function calcular() {
-        const ingresoInput = document.getElementById('ingreso').value;
+        const ingresoLimpio = document.getElementById('ingreso').value.replace(/\./g, "");
+        const ingreso = parseFloat(ingresoLimpio) || 0;
         const tarifasInput = document.getElementById('tarifas').value;
 
-        // Validaciones
-        if (!ingresoInput || parseFloat(ingresoInput) <= 0) { 
-            alert("Por favor, ingresa tu ingreso mensual."); 
-            return; 
-        }
-        if (tarifasInput === "") { 
-            alert("Por favor, selecciona una categoría en Tarifas."); 
-            return; 
+        if (ingreso <= 0 || tarifasInput === "") {
+            alert("Ingresa tus ingresos y selecciona una tarifa.");
+            return;
         }
 
-        const ingreso = parseFloat(ingresoInput);
         const gastos = parseFloat(document.getElementById('alquiler').value) +
                        parseFloat(tarifasInput) +
                        parseFloat(document.getElementById('prepaga').value) +
@@ -144,47 +201,14 @@
 
         const saldo = ingreso - gastos;
         const porc = (saldo / ingreso) * 100;
-        
-        document.getElementById('resultado').style.display = 'block';
-        document.getElementById('share-btn').style.display = 'block';
-        
+
+        const placa = document.getElementById('placa-resultado');
+        placa.style.display = 'block';
+        document.getElementById('btn-descargar').style.display = 'block';
+
         if (saldo >= 0) {
-            document.getElementById('resultado').className = 'res-box pos';
-            document.getElementById('barra').style.backgroundColor = '#198754';
-            document.getElementById('monto-final').innerText = "Saldo: " + formato.format(saldo);
-            document.getElementById('porcentaje-texto').innerText = "Te queda el " + porc.toFixed(1) + "%";
-            textoGlobal = `¡Calculé mi presupuesto! Me queda el ${porc.toFixed(1)}% del sueldo libre (${formato.format(saldo)}).`;
+            document.getElementById('placa-titulo').innerText = "Te quedan";
+            document.getElementById('placa-monto').innerText = formato.format(saldo);
+            document.getElementById('placa-porc').innerText = "Te queda el " + porc.toFixed(1) + "% de tus ingresos";
         } else {
-            document.getElementById('resultado').className = 'res-box neg';
-            document.getElementById('barra').style.backgroundColor = '#dc3545';
-            document.getElementById('monto-final').innerText = "Déficit: " + formato.format(Math.abs(saldo));
-            document.getElementById('porcentaje-texto').innerText = "Gastas un " + Math.abs(porc).toFixed(1) + "% más de lo que ganas.";
-            textoGlobal = `Mi presupuesto está en rojo por ${formato.format(Math.abs(saldo))}. Gastos exceden sueldo en un ${Math.abs(porc).toFixed(1)}%.`;
-        }
-
-        document.getElementById('barra').style.width = Math.max(0, Math.min(100, porc)) + "%";
-        document.getElementById('desglose').innerText = "Gastos Totales: " + formato.format(gastos);
-        
-        // Scroll automático al resultado
-        document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    async function compartir() {
-        const t = textoGlobal + "\nCalculado en: " + window.location.href;
-        if (navigator.share) {
-            try { await navigator.share({ title: 'Presupuesto', text: t }); } catch (e) {}
-        } else {
-            try { 
-                await navigator.clipboard.writeText(t); 
-                alert("¡Copiado! Ya puedes pegarlo en WhatsApp o redes."); 
-            } catch (e) { 
-                alert("Copia el texto manualmente."); 
-            }
-        }
-    }
-
-    function reiniciar() { location.reload(); }
-</script>
-
-</body>
-</html>
+            document.getElementById('placa-titulo').innerText = "Déficit mensual
