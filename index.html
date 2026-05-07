@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gastos Mensuales</title>
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --bg-body: #f0f2f5;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); padding: 20px; color: #212529; }
+        .container { max-width: 550px; margin: auto; background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary-color); margin-bottom: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .field { margin-bottom: 22px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #495057; }
+        input, select { width: 100%; padding: 14px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 16px; box-sizing: border-box; transition: all 0.3s ease; }
+        input:focus, select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 10px; }
+        button { flex: 2; padding: 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button.reset { flex: 1; background-color: #6c757d; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .res-box { margin-top: 30px; padding: 25px; border-radius: 15px; display: none; text-align: center; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .pos { background-color: #e6f4ea; border: 1px solid #34a853; color: #137333; }
+        .neg { background-color: #fce8e6; border: 1px solid #ea4335; color: #c5221f; }
+        
+        .progress-container { width: 100%; background-color: rgba(0,0,0,0.05); border-radius: 20px; margin: 18px 0; height: 22px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
+        .progress-bar { height: 100%; transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 0%; }
+        
+        .info-nota { font-size: 0.8em; color: #6c757d; margin-top: 6px; font-style: italic; }
+        optgroup { font-style: normal; font-weight: bold; color: var(--primary-color); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mi Presupuesto</h2>
+
+    <div class="field">
+        <label>Tus Ingresos Mensuales ($)</label>
+        <input type="number" id="ingreso" placeholder="Ej: 1.200.000">
+    </div>
+
+    <div class="field">
+        <label>Alquiler</label>
+        <select id="alquiler">
+            <option value="0">No alquilo / Propio</option>
+            <option value="430000">1 ambiente</option>
+            <option value="600000">2 ambientes</option>
+            <option value="700000">3 ambientes</option>
+            <option value="830000">4 ambientes</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Tarifas (Luz, Gas y Agua)</label>
+        <select id="tarifas">
+            <option value="141722.99">Con subsidios consumo medio</option>
+            <option value="181337.99">Sin subsidios consumo medio</option>
+            <option value="186886.99">Con subsidios consumo medio/alto</option>
+            <option value="214289.99">Sin subsidios consumo medio/alto</option>
+        </select>
+        <div class="info-nota">* Electricidad, gas natural y agua según consumo promedio.</div>
+    </div>
+
+    <div class="field">
+        <label>Cobertura Médica (Prepaga)</label>
+        <select id="prepaga">
+            <option value="0">No tengo / Obra Social</option>
+            <optgroup label="Planes Individuales">
+                <option value="106000">Individual: Opción económica</option>
+                <option value="121916">Individual: Opción media</option>
+                <option value="144000">Individual: Opción alta</option>
+            </optgroup>
+            <optgroup label="Planes Familiares (2 adultos, 2 niños)">
+                <option value="385454">Familiar: Opción económica</option>
+                <option value="500463">Familiar: Opción media</option>
+                <option value="764223">Familiar: Opción alta</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Litros de Nafta (al mes)</label>
+        <input type="number" id="nafta" placeholder="Cantidad de litros">
+        <div class="info-nota">* Costo por litro: $1.850</div>
+    </div>
+
+    <div class="field">
+        <label>Boletos de Colectivo (al mes)</label>
+        <input type="number" id="colectivo" placeholder="Cantidad de boletos">
+        <div class="info-nota">* Costo por cada boleto: $1.720</div>
+    </div>
+
+    <div class="button-group">
+        <button onclick="calcular()">Calcular</button>
+        <button class="reset" onclick="reiniciar()">Reiniciar</button>
+    </div>
+
+    <div id="resultado" class="res-box">
+        <div id="monto-final" style="font-size: 1.8em; font-weight: bold;"></div>
+        <div id="porcentaje-texto" style="margin: 12px 0; font-weight: 600; font-size: 1.1em;"></div>
+        
+        <div class="progress-container">
+            <div id="barra" class="progress-bar"></div>
+        </div>
+
+        <div id="desglose" style="font-size: 0.95em; margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px;"></div>
+    </div>
+</div>
+
+<script>
+    const formatoMoneda = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+
+    function calcular() {
+        const PRECIO_NAFTA = 1850;
+        const PRECIO_BOLETO = 1720;
+
+        const ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
+        if (ingreso <= 0) {
+            alert("Por favor, ingresa tu ingreso mensual.");
+            return;
+        }
+
+        const vAlquiler = parseFloat(document.getElementById('alquiler').value);
+        const vTarifas = parseFloat(document.getElementById('tarifas').value);
+        const vPrepaga = parseFloat(document.getElementById('prepaga').value);
+        const litrosNafta = parseFloat(document.getElementById('nafta').value) || 0;
+        const cantBoletos = parseFloat(document.getElementById('colectivo').value) || 0;
+
+        const totalTransporte = (litrosNafta * PRECIO_NAFTA) + (cantBoletos * PRECIO_BOLETO);
+        const totalGastos = vAlquiler + vTarifas + vPrepaga + totalTransporte;
+        const saldo = ingreso - totalGastos;
+        
+        const porcentajeLibre = (saldo / ingreso) * 100;
+        const porcentajeGastado = (totalGastos / ingreso) * 100;
+
+        const resDiv = document.getElementById('resultado');
+        const barra = document.getElementById('barra');
+        resDiv.style.display = 'block';
+        
+        if (saldo >= 0) {
+            resDiv.className = 'res-box pos';
+            barra.style.backgroundColor = '#198754';
+            document.getElementById('monto-final').innerText = "Saldo libre: " + formatoMoneda.format(saldo);
+            document.getElementById('porcentaje-texto').innerText = "Te queda el " + porcentajeLibre.toFixed(1) + "% de tu ingreso.";
+        } else {
+            resDiv.className = 'res-box neg';
+            barra.style.backgroundColor = '#dc3545';
+            document.getElementById('monto-final').innerText = "Déficit: " + formatoMoneda.format(Math.abs(saldo));
+            document.getElementById('porcentaje-texto').innerText = "Gastas un " + Math.abs(porcentajeLibre).toFixed(1) + "% más de lo que ganas.";
+        }
+
+        let anchoVisual = Math.max(0, Math.min(100, porcentajeLibre));
+        barra.style.width = anchoVisual + "%";
+        
+        document.getElementById('desglose').innerHTML = `
+            <strong>Total de Gastos:</strong> ${formatoMoneda.format(totalGastos)}<br>
+            Este monto representa el <strong>${porcentajeGastado.toFixed(1)}%</strong> de tu salario.
+        `;
+
+        // Scroll suave hasta el resultado
+        resDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function reiniciar() {
+        document.getElementById('ingreso').value = '';
+        document.getElementById('nafta').value = '';
+        document.getElementById('colectivo').value = '';
+        document.getElementById('alquiler').selectedIndex = 0;
+        document.getElementById('tarifas').selectedIndex = 0;
+        document.getElementById('prepaga').selectedIndex = 0;
+        document.getElementById('resultado').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
