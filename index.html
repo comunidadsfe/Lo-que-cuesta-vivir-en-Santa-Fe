@@ -303,6 +303,21 @@
             document.getElementById('placa-monto').innerText = formato.format(Math.abs(saldo));
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
+
+        // ENVÍO DE DATOS A GOOGLE SHEETS
+        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSf5E0Sl-nkVcoQ50I621uRXVC85PnGO-vVFuee8UAE02tXCNA/formResponse";
+        const formData = new FormData();
+        formData.append("entry.1345467469", ingreso);
+        formData.append("entry.1154021935", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
+        formData.append("entry.1557253484", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
+        formData.append("entry.1541049932", document.getElementById('prepaga').options[document.getElementById('prepaga').selectedIndex].text);
+        formData.append("entry.27844837", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
+        formData.append("entry.1276651353", document.getElementById('nafta').value || 0);
+        formData.append("entry.796852082", (document.getElementById('colectivo_cant').value || 0) + " (" + document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text + ")");
+        formData.append("entry.1554785834", saldo);
+
+        fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
+
         document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
     }
 
