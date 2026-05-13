@@ -122,17 +122,21 @@
     </div>
 
     <div class="field">
-        <label>¿Te movés en auto?</label>
-        <select id="mueve_auto" onchange="toggleAuto()">
+        <label>¿Te movés en auto o en moto?</label>
+        <select id="mueve_vehiculo" onchange="toggleVehiculo()">
             <option value="no">No</option>
-            <option value="si">Sí</option>
+            <option value="moto">Sí, en moto</option>
+            <option value="auto">Sí, en auto</option>
         </select>
-        <div id="seccion_auto" class="sub-field">
+        <div id="seccion_vehiculo" class="sub-field">
             <label>Nafta (Litros/Mes)</label>
             <input type="number" id="nafta" placeholder="Cantidad de litros">
             <div class="nota-aclaratoria">*Valor de litro en YPF Santa Fe: $2.060 (mayo 2026).</div>
-            <label style="margin-top:15px;">¿Cuánto gastás en SEOM? ($)</label>
-            <input type="text" id="seom" placeholder="Monto en pesos" oninput="formatearMonto(this)">
+            
+            <div id="seccion_seom" style="display:none; margin-top:15px;">
+                <label>¿Cuánto gastás en SEOM? ($)</label>
+                <input type="text" id="seom" placeholder="Monto en pesos" oninput="formatearMonto(this)">
+            </div>
         </div>
     </div>
 
@@ -214,8 +218,17 @@
         input.value = valor;
     }
 
-    function toggleAuto() {
-        document.getElementById('seccion_auto').style.display = document.getElementById('mueve_auto').value === 'si' ? 'block' : 'none';
+    function toggleVehiculo() {
+        const val = document.getElementById('mueve_vehiculo').value;
+        const seccionVehiculo = document.getElementById('seccion_vehiculo');
+        const seccionSeom = document.getElementById('seccion_seom');
+        
+        if (val === 'no') {
+            seccionVehiculo.style.display = 'none';
+        } else {
+            seccionVehiculo.style.display = 'block';
+            seccionSeom.style.display = (val === 'auto') ? 'block' : 'none';
+        }
     }
 
     function toggleBondi() {
@@ -230,11 +243,15 @@
         if (ingreso <= 0) { alert("Ingresá tus ingresos mensuales."); return; }
         if (tarifasVal === "") { alert("Seleccioná una opción de tarifas."); return; }
 
-        let gastosAuto = 0;
-        if (document.getElementById('mueve_auto').value === 'si') {
+        let gastosVehiculo = 0;
+        const vehiculoTipo = document.getElementById('mueve_vehiculo').value;
+        if (vehiculoTipo !== 'no') {
             const nafta = (parseFloat(document.getElementById('nafta').value) || 0) * 2060;
-            const seom = parseFloat(document.getElementById('seom').value.replace(/\./g, "")) || 0;
-            gastosAuto = nafta + seom;
+            let seom = 0;
+            if (vehiculoTipo === 'auto') {
+                seom = parseFloat(document.getElementById('seom').value.replace(/\./g, "")) || 0;
+            }
+            gastosVehiculo = nafta + seom;
         }
 
         let gastosBondi = 0;
@@ -246,7 +263,7 @@
                        parseFloat(tarifasVal) + 
                        parseFloat(document.getElementById('salud').value) + 
                        parseFloat(document.getElementById('monotributo').value) + 
-                       gastosAuto + gastosBondi;
+                       gastosVehiculo + gastosBondi;
         
         const saldo = ingreso - gastos;
         const porc = (saldo / ingreso) * 100;
@@ -272,7 +289,13 @@
         formData.append("entry.1557253484", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
         formData.append("entry.1541049932", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
         formData.append("entry.27844837", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
-        formData.append("entry.1276651353", document.getElementById('mueve_auto').value === 'si' ? "Litros: " + document.getElementById('nafta').value + " | SEOM: " + document.getElementById('seom').value : "No usa auto");
+        
+        let infoVehiculo = "";
+        if (vehiculoTipo === 'no') infoVehiculo = "No usa vehículo";
+        else if (vehiculoTipo === 'moto') infoVehiculo = "MOTO | Litros: " + (document.getElementById('nafta').value || 0);
+        else infoVehiculo = "AUTO | Litros: " + (document.getElementById('nafta').value || 0) + " | SEOM: " + (document.getElementById('seom').value || 0);
+        
+        formData.append("entry.1276651353", infoVehiculo);
         formData.append("entry.796852082", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_cant').value + " (" + document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text + ")" : "No usa colectivo");
         formData.append("entry.1554785834", saldo);
 
