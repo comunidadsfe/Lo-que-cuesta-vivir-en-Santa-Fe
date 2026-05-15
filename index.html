@@ -54,7 +54,14 @@
         .btn-share { background-color: #25D366; color: white; }
         .btn-download { background-color: var(--comunidad-fucsia); color: white; }
 
-        .form-visible-container { width: 100%; max-width: 600px; margin: 20px 0 40px 0; background: white; padding: 10px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden; }
+        /* Estilos Formulario Contacto */
+        .form-container { background: white; border-radius: 24px; padding: 30px; max-width: 480px; width: 100%; margin: 20px auto 40px auto; color: var(--comunidad-violeta); box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 2px solid var(--comunidad-fucsia); box-sizing: border-box; }
+        .form-input { width: 100%; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; font-weight: 600; outline: none; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        .form-input:focus { border-color: var(--comunidad-fucsia); }
+        .option-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .option-btn { flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 0.7rem; color: #64748b; transition: all 0.2s; cursor: pointer; background: #f8fafc; font-family: 'Montserrat', sans-serif; }
+        .option-btn.active { background: var(--comunidad-violeta); color: white; border-color: var(--comunidad-violeta); }
+        .btn-submit { background: var(--comunidad-fucsia); color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; margin-top: 10px; font-family: 'Montserrat', sans-serif; }
 
         .section-divider { width: 100%; text-align: center; color: white; margin: 40px 0 20px 0; }
         .section-divider h3 { font-size: 1.1rem; font-weight: 600; padding: 0 15px; line-height: 1.4; }
@@ -183,8 +190,20 @@
     </div>
 </div>
 
-<div class="form-visible-container">
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf5E0Sl-nkVcoQ50I621uRXVC85PnGO-vVFuee8UAE02tXCNA/viewform?embedded=true" width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">Cargando formulario…</iframe>
+<div class="form-container" id="formSection">
+    <h3 style="text-align: center; text-transform: uppercase; font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; italic">¿Querés recibir nuestros informes?</h3>
+    
+    <div class="option-group">
+        <button onclick="setFormMode('wa')" id="optWA" class="option-btn active italic">Por WhatsApp</button>
+        <button onclick="setFormMode('mail')" id="optMail" class="option-btn italic">Por Mail</button>
+    </div>
+
+    <form id="contactForm" target="hidden_iframe" onsubmit="return handleFormSubmit()">
+        <div id="fieldsContainer">
+            </div>
+        <button type="submit" class="btn-submit italic">Enviar Datos</button>
+    </form>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {showSuccess();}"></iframe>
 </div>
 
 <div class="section-divider">
@@ -210,6 +229,57 @@
 </div>
 
 <script>
+    // LÓGICA FORMULARIO CONTACTO
+    let currentMode = 'wa';
+    let submitted = false;
+
+    function setFormMode(mode) {
+        currentMode = mode;
+        const container = document.getElementById('fieldsContainer');
+        document.getElementById('optWA').className = mode === 'wa' ? 'option-btn active italic' : 'option-btn italic';
+        document.getElementById('optMail').className = mode === 'mail' ? 'option-btn active italic' : 'option-btn italic';
+
+        if (mode === 'wa') {
+            container.innerHTML = `
+                <input type="text" id="nameField" name="entry.1321869567" placeholder="Nombre y Apellido" class="form-input">
+                <input type="text" id="whatsappField" name="entry.135638054" placeholder="WhatsApp" class="form-input">
+                <input type="hidden" name="entry.593198354" value="">
+            `;
+        } else {
+            container.innerHTML = `
+                <input type="hidden" name="entry.1321869567" value="">
+                <input type="hidden" name="entry.135638054" value="">
+                <input type="email" id="mailField" name="entry.593198354" placeholder="Correo electrónico" class="form-input" required>
+            `;
+        }
+    }
+
+    function handleFormSubmit() {
+        if (currentMode === 'wa') {
+            const name = document.getElementById('nameField').value.trim();
+            const wa = document.getElementById('whatsappField').value.trim();
+            if (name === "" || wa === "") {
+                alert("Por favor, completá nombre y celular.");
+                return false;
+            }
+        }
+        const action = "https://docs.google.com/forms/d/e/1FAIpQLScC1OTPDh4_Xupab8GMIwe9XqWdxTLCPYgv4H8UqDOL3YZE2A/formResponse";
+        document.getElementById('contactForm').action = action;
+        submitted = true;
+        return true;
+    }
+
+    function showSuccess() {
+        document.getElementById('formSection').innerHTML = `
+            <div style="text-align: center; padding: 40px 0;">
+                <h3 style="text-transform: uppercase; font-weight: 800; font-size: 1.3rem; color: var(--comunidad-violeta); italic">¡Gracias por sumarte!</h3>
+            </div>
+        `;
+    }
+
+    setFormMode('wa');
+
+    // LÓGICA CALCULADORA GASTOS
     const formato = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
     
     function formatearMonto(input) {
@@ -222,7 +292,6 @@
         const val = document.getElementById('mueve_vehiculo').value;
         const seccionVehiculo = document.getElementById('seccion_vehiculo');
         const seccionSeom = document.getElementById('seccion_seom');
-        
         if (val === 'no') {
             seccionVehiculo.style.display = 'none';
         } else {
@@ -281,7 +350,7 @@
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
 
-        // ENVÍO INVISIBLE A GOOGLE SHEETS
+        // ENVÍO INVISIBLE DE CÁLCULO
         const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSf5E0Sl-nkVcoQ50I621uRXVC85PnGO-vVFuee8UAE02tXCNA/formResponse";
         const formData = new FormData();
         formData.append("entry.1345467469", ingreso);
@@ -289,12 +358,7 @@
         formData.append("entry.1557253484", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
         formData.append("entry.1541049932", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
         formData.append("entry.27844837", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
-        
-        let infoVehiculo = "";
-        if (vehiculoTipo === 'no') infoVehiculo = "No usa vehículo";
-        else if (vehiculoTipo === 'moto') infoVehiculo = "MOTO | Litros: " + (document.getElementById('nafta').value || 0);
-        else infoVehiculo = "AUTO | Litros: " + (document.getElementById('nafta').value || 0) + " | SEOM: " + (document.getElementById('seom').value || 0);
-        
+        let infoVehiculo = vehiculoTipo === 'no' ? "No usa vehículo" : (vehiculoTipo === 'moto' ? "MOTO | Litros: " + (document.getElementById('nafta').value || 0) : "AUTO | Litros: " + (document.getElementById('nafta').value || 0) + " | SEOM: " + (document.getElementById('seom').value || 0));
         formData.append("entry.1276651353", infoVehiculo);
         formData.append("entry.796852082", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_cant').value + " (" + document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text + ")" : "No usa colectivo");
         formData.append("entry.1554785834", saldo);
