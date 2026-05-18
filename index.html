@@ -444,7 +444,7 @@
             formularioEnvio.appendChild(inputHidden);
         };
 
-        // INTEGRACIÓN DE LOS 16 ID DE TU ÚLTIMA INSPECCIÓN (CON CENTINELAS ACTIVOS)
+        // INTEGRACIÓN DE LOS 16 ID DE TU ÚLTIMA INSPECCIÓN (CON SECUENCIA Y TEXTOS SEGUROS)
         agregarCampo("entry.789366050", ingreso);
         agregarCampo("entry.560044812", esPreset ? selector.options[selector.selectedIndex].text : "Manual");
         agregarCampo("entry.320562563", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
@@ -452,18 +452,25 @@
         agregarCampo("entry.1141729873", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
         agregarCampo("entry.2003469524", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
         
-        // Estructura Bloque Vehículo
-        agregarCampo("entry.1910555676", document.getElementById('mueve_vehiculo').options[document.getElementById('mueve_vehiculo').selectedIndex].text);
+        // Bloque Vehículo - Protegido contra opciones inactivas
+        const mueveVehiculoSelect = document.getElementById('mueve_vehiculo');
+        agregarCampo("entry.1910555676", mueveVehiculoSelect.options[mueveVehiculoSelect.selectedIndex].text);
         agregarCampo("entry.1910555676_sentinel", "");
         agregarCampo("entry.1850411247", naftaLitros);
         agregarCampo("entry.35313641", naftaCosto);
         agregarCampo("entry.1095848126", seomMonto);
         
-        // Estructura Bloque Colectivo
-        agregarCampo("entry.2038736944", document.getElementById('mueve_bondi').options[document.getElementById('mueve_bondi').selectedIndex].text);
+        // Bloque Colectivo - Protegido contra opciones inactivas para evitar cierres del script
+        const mueveBondiSelect = document.getElementById('mueve_bondi');
+        const colectivoTipoSelect = document.getElementById('colectivo_tipo');
+        
+        agregarCampo("entry.2038736944", mueveBondiSelect.options[mueveBondiSelect.selectedIndex].text);
         agregarCampo("entry.2038736944_sentinel", "");
         agregarCampo("entry.1936157354", colectivoCant);
-        agregarCampo("entry.1986127655", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No");
+        
+        // Si el usuario no viaja en colectivo, mandamos "No" directamente sin evaluar el selector oculto
+        const textoColectivoTipo = mueveBondiSelect.value === 'si' ? colectivoTipoSelect.options[colectivoTipoSelect.selectedIndex].text : "No";
+        agregarCampo("entry.1986127655", textoColectivoTipo);
         agregarCampo("entry.476360893", gastosBondi);
 
         document.body.appendChild(formularioEnvio);
