@@ -369,7 +369,7 @@
         if (selector.value === 'manual') {
             const ingresoRaw = document.getElementById('ingreso').value.replace(/\./g, "");
             ingreso = parseFloat(ingresoRaw) || 0;
-            tipoIngresoTexto = "Manual";
+            tipoIngresoTexto = "Cargar mis ingresos manualmente";
         } else {
             ingreso = parseFloat(selector.value);
             esPreset = true;
@@ -431,46 +431,40 @@
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
 
-        // Generar un ID único basado en el timestamp actual para el anclaje de datos
-        const idCalculo = new Date().toISOString();
+        // Generar el código único de fecha y hora para el índice inicial
+        const idCalculo = new Date().toLocaleString('es-AR');
 
-        // Mapeo de strings visuales para campos de opciones
-        const alquilerEl = document.getElementById('alquiler');
-        const alquilerTexto = alquilerEl.options[alquilerEl.selectedIndex].text;
-
-        const tarifasEl = document.getElementById('tarifas');
-        const tarifasTexto = tarifasEl.options[tarifasEl.selectedIndex].text;
-
-        const saludEl = document.getElementById('salud');
-        const saludTexto = saludEl.options[saludEl.selectedIndex].text;
-
-        const monotributoEl = document.getElementById('monotributo');
-        const monotributoTexto = monotributoEl.options[monotributoEl.selectedIndex].text;
+        // Mapeo de strings visuales de tus selects
+        const alquilerTexto = document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text;
+        const tarifasTexto = document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text;
+        const saludTexto = document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text;
+        const monotributoTexto = document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text;
 
         let vehiculoTexto = "No";
         if (vehiculoTipo === "moto") vehiculoTexto = "Sí, en moto";
         if (vehiculoTipo === "auto") vehiculoTexto = "Sí, en auto";
 
-        // Envío invisible de datos a tu NUEVO Google Form de respuestas cortas
+        // URL de envío mapeada a tu NUEVO formulario de respuestas cortas
         const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSd1LagvHkPQoveNaDk2oKnfpFROkNrwudw2gorUCnp8tpI/formResponse";
         const formData = new FormData();
         
-        formData.append("entry.1985472103", idCalculo);            // 1. ID Cálculo
-        formData.append("entry.456123984", tipoIngresoTexto);      // 2. Perfil de Ingresos
-        formData.append("entry.1122334455", ingreso);              // 3. Ingresos Mensuales ($)
-        formData.append("entry.887766554", alquilerTexto);         // 4. Alquiler
-        formData.append("entry.201948374", tarifasTexto);          // 5. Tarifas (Luz, Gas, Agua)
-        formData.append("entry.142536475", saludTexto);            // 6. Salud
-        formData.append("entry.998877665", monotributoTexto);      // 7. Monotributo
-        formData.append("entry.334455667", vehiculoTexto);         // 8. ¿Se mueve en auto o en moto?
-        formData.append("entry.556677889", naftaLitros);            // 9. Nafta (Litros/Mes)
-        formData.append("entry.121314151", naftaCostoTotal);        // 10. Nafta Gasto Total ($)
-        formData.append("entry.161718192", seomMonto);              // 11. Gasto SEOM ($)
-        formData.append("entry.212223242", usaBondi ? "Sí" : "No"); // 12. ¿Se mueve en colectivo?
-        formData.append("entry.252627282", colectivoCant);          // 13. Cantidad de Boletos/Mes
-        formData.append("entry.293031323", usaBondi ? colectivoTipoTexto : ""); // 14. Tipo de Tarifa de Colectivo
-        formData.append("entry.333435363", gastosBondi);            // 15. Gasto Total Colectivo ($)
-        formData.append("entry.373839404", saldo);                  // 16. Saldo Final ($)
+        // Inyección de datos alineada a los 16 inputs secuenciales de tu Form nuevo
+        formData.append("entry.449757659", idCalculo);             // 1. ID Cálculo
+        formData.append("entry.480031175", tipoIngresoTexto);       // 2. Perfil de Ingresos
+        formData.append("entry.685311029", ingreso);               // 3. Ingresos Mensuales ($)
+        formData.append("entry.1491295982", alquilerTexto);         // 4. Alquiler
+        formData.append("entry.353347587", tarifasTexto);          // 5. Tarifas (Luz, Gas, Agua)
+        formData.append("entry.1017992928", saludTexto);            // 6. Salud
+        formData.append("entry.1030018512", monotributoTexto);      // 7. Monotributo
+        formData.append("entry.1595186001", vehiculoTexto);         // 8. ¿Se mueve en auto o en moto?
+        formData.append("entry.1541334969", naftaLitros);           // 9. Nafta (Litros/Mes)
+        formData.append("entry.1705607063", naftaCostoTotal);       // 10. Nafta Gasto Total ($)
+        formData.append("entry.1982701193", seomMonto);             // 11. Gasto SEOM ($)
+        formData.append("entry.1352726615", usaBondi ? "Sí" : "No"); // 12. ¿Se mueve en colectivo?
+        formData.append("entry.1764669811", colectivoCant);         // 13. Cantidad de Boletos/Mes
+        formData.append("entry.206689255", usaBondi ? colectivoTipoTexto : ""); // 14. Tipo de Tarifa de Colectivo
+        formData.append("entry.887265113", gastosBondi);            // 15. Gasto Total Colectivo ($)
+        formData.append("entry.1802956799", saldo);                 // 16. Saldo Final ($)
 
         fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
         document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
