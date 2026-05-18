@@ -254,8 +254,6 @@
     </div>
 </div>
 
-<iframe name="contenedor_envio_invisible" id="contenedor_envio_invisible" style="display:none;"></iframe>
-
 <script>
     // LÓGICA FORMULARIO CONTACTO
     let currentMode = 'wa';
@@ -383,14 +381,12 @@
 
         let gastosVehiculo = 0;
         let naftaLitros = 0;
-        let naftaCosto = 0;
         let seomMonto = 0;
         const vehiculoTipo = document.getElementById('mueve_vehiculo').value;
 
         if (vehiculoTipo !== 'no') {
             naftaLitros = parseFloat(document.getElementById('nafta').value) || 0;
-            const naftaCostoRaw = naftaLitros * 2087;
-            naftaCosto = parseFloat(naftaCostoRaw.toFixed(0));
+            const naftaCosto = naftaLitros * 2087;
             if (vehiculoTipo === 'auto') {
                 seomMonto = parseFloat(document.getElementById('seom').value.replace(/\./g, "")) || 0;
             }
@@ -398,11 +394,8 @@
         }
 
         let gastosBondi = 0;
-        let colectivoCant = 0;
         if (document.getElementById('mueve_bondi').value === 'si') {
-            colectivoCant = parseFloat(document.getElementById('colectivo_cant').value) || 0;
-            const gastosBondiRaw = colectivoCant * parseFloat(document.getElementById('colectivo_tipo').value);
-            gastosBondi = parseFloat(gastosBondiRaw.toFixed(0));
+            gastosBondi = (parseFloat(document.getElementById('colectivo_cant').value) || 0) * parseFloat(document.getElementById('colectivo_tipo').value);
         }
 
         const gastos = parseFloat(document.getElementById('alquiler').value) + 
@@ -429,57 +422,42 @@
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
 
-        // GENERACIÓN INTERNA DE FORMULARIO COMPATIBLE CON EL PUENTE INVISIBLE
-        const formularioEnvio = document.createElement('form');
-        formularioEnvio.method = 'POST';
-        formularioEnvio.action = 'https://docs.google.com/forms/d/e/1FAIpQLSexVODJ4z04uIDtozN3Yx0ApsfJE0E1Mxvte_NmLuPWi4dSug/formResponse';
-        formularioEnvio.target = 'contenedor_envio_invisible';
-        formularioEnvio.style.display = 'none';
+        // BLOQUE DE ENVÍO REORDENADO DE MANERA ESTRICTA SEGÚN TUS 5 CAPTURAS (001 A 005)
+        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSexVODJ4z04uIDtozN3Yx0ApsfJE0E1Mxvte_NmLuPWi4dSug/formResponse";
+        const formData = new FormData();
+        
+        // Columna B e I (001.png y 004.png) -> Perfil y Litros
+        formData.append("entry.560044812", esPreset ? selector.options[selector.selectedIndex].text : "Manual");
+        formData.append("entry.789366050", naftaLitros);
+        
+        // Columna C y D (001.png y 002.png) -> Monto de Ingresos y Alquiler Texto
+        formData.append("entry.560044812", ingreso);
+        formData.append("entry.320562563", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
+        
+        // Columna E y G (002.png y 003.png) -> Tarifas Texto y Monotributo Texto
+        formData.append("entry.353057028", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
+        formData.append("entry.2003469524", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
+        
+        // Columna F y M (003.png y 005.png) -> Salud Texto y Tipo de Boleto Colectivo
+        formData.append("entry.1141729873", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
+        formData.append("entry.1986127655", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No usa colectivo");
+        
+        // Columna H y I (Pesos) (004.png) -> ¿Usa Vehículo? Texto y Gasto Nafta Pesos
+        formData.append("entry.1910555676", vehiculoTipo.toUpperCase());
+        formData.append("entry.1850411247", naftaLitros * 2087);
+        
+        // Columna J y K (004.png y 005.png) -> Gasto SEOM Pesos y ¿Usa Colectivo? Texto
+        formData.append("entry.35313641", seomMonto);
+        formData.append("entry.2038736944", document.getElementById('mueve_bondi').value.toUpperCase());
+        
+        // Columna L y N (005.png) -> Cantidad Boletos Numérico y Gasto Colectivo Pesos
+        formData.append("entry.1095848126", parseFloat(document.getElementById('colectivo_cant').value) || 0);
+        formData.append("entry.1936157354", gastosBondi);
+        
+        // Columna O (005.png) -> Saldo Final Numérico
+        formData.append("entry.1554785834", saldo);
 
-        const agregarCampo = (nombre, valor) => {
-            const inputHidden = document.createElement('input');
-            inputHidden.type = 'hidden';
-            inputHidden.name = nombre;
-            inputHidden.value = valor;
-            formularioEnvio.appendChild(inputHidden);
-        };
-
-        // INTEGRACIÓN DE LOS 16 ID DE TU ÚLTIMA INSPECCIÓN (CON SECUENCIA Y TEXTOS SEGUROS)
-        agregarCampo("entry.789366050", ingreso);
-        agregarCampo("entry.560044812", esPreset ? selector.options[selector.selectedIndex].text : "Manual");
-        agregarCampo("entry.320562563", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
-        agregarCampo("entry.353057028", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
-        agregarCampo("entry.1141729873", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
-        agregarCampo("entry.2003469524", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
-        
-        // Bloque Vehículo - Protegido contra opciones inactivas
-        const mueveVehiculoSelect = document.getElementById('mueve_vehiculo');
-        agregarCampo("entry.1910555676", mueveVehiculoSelect.options[mueveVehiculoSelect.selectedIndex].text);
-        agregarCampo("entry.1910555676_sentinel", "");
-        agregarCampo("entry.1850411247", naftaLitros);
-        agregarCampo("entry.35313641", naftaCosto);
-        agregarCampo("entry.1095848126", seomMonto);
-        
-        // Bloque Colectivo - Protegido contra opciones inactivas para evitar cierres del script
-        const mueveBondiSelect = document.getElementById('mueve_bondi');
-        const colectivoTipoSelect = document.getElementById('colectivo_tipo');
-        
-        agregarCampo("entry.2038736944", mueveBondiSelect.options[mueveBondiSelect.selectedIndex].text);
-        agregarCampo("entry.2038736944_sentinel", "");
-        agregarCampo("entry.1936157354", colectivoCant);
-        
-        // Si el usuario no viaja en colectivo, mandamos "No" directamente sin evaluar el selector oculto
-        const textoColectivoTipo = mueveBondiSelect.value === 'si' ? colectivoTipoSelect.options[colectivoTipoSelect.selectedIndex].text : "No";
-        agregarCampo("entry.1986127655", textoColectivoTipo);
-        agregarCampo("entry.476360893", gastosBondi);
-
-        document.body.appendChild(formularioEnvio);
-        formularioEnvio.submit();
-        
-        setTimeout(() => {
-            document.body.removeChild(formularioEnvio);
-        }, 500);
-
+        fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
         document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
     }
 
