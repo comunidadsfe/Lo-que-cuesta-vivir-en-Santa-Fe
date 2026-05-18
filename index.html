@@ -432,7 +432,6 @@
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
 
-        // Variables de procesamiento locales para las nuevas preguntas
         const idCalculo = new Date().toLocaleString('es-AR');
         const alquilerTexto = document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text;
         const tarifasTexto = document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text;
@@ -443,12 +442,11 @@
         if (vehiculoTipo === "moto") vehiculoTexto = "Sí, en moto";
         if (vehiculoTipo === "auto") vehiculoTexto = "Sí, en auto";
 
-        // Envío invisible estructurado con la URL y los 16 campos reales de hoy en texto plano
-        const formURL = ""https://docs.google.com/forms/d/1LagvHkPQoveNaDk2oKnfpFROkNrwudw2gorUCnp8tpI/formResponse"";
+        const formURL = "https://docs.google.com/forms/d/1LagvHkPQoveNaDk2oKnfpFROkNrwudw2gorUCnp8tpI/formResponse";
         const formData = new URLSearchParams();
         
         formData.append("entry.449757659", idCalculo);
-        formData.append("entry.480031175", tipoIncomeTexto = tipoIngresoTexto);
+        formData.append("entry.480031175", tipoIngresoTexto);
         formData.append("entry.685311029", ingreso);
         formData.append("entry.1491295982", alquilerTexto);
         formData.append("entry.353347587", tarifasTexto);
