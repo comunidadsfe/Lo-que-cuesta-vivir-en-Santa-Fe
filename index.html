@@ -78,6 +78,27 @@
 </head>
 <body>
 
+<iframe name="calc_hidden_iframe" id="calc_hidden_iframe" style="display:none;"></iframe>
+
+<form id="calculatorGoogleForm" method="POST" target="calc_hidden_iframe" style="display:none;" action="https://docs.google.com/forms/d/e/1FAIpQLSfpKOfH0GZ7hS9bS8_SIn3gE-O48T6Ebe7B6qfNfD15rQ7rLg/formResponse">
+    <input type="text" name="entry.1985472103" id="g_id">
+    <input type="text" name="entry.456123984" id="g_perfil">
+    <input type="text" name="entry.1122334455" id="g_ingreso">
+    <input type="text" name="entry.887766554" id="g_alquiler">
+    <input type="text" name="entry.201948374" id="g_tarifas">
+    <input type="text" name="entry.142536475" id="g_salud">
+    <input type="text" name="entry.998877665" id="g_monotributo">
+    <input type="text" name="entry.334455667" id="g_mueve_vehi">
+    <input type="text" name="entry.556677889" id="g_nafta_litros">
+    <input type="text" name="entry.121314151" id="g_nafta_monto">
+    <input type="text" name="entry.161718192" id="g_seom_monto">
+    <input type="text" name="entry.212223242" id="g_mueve_bondi">
+    <input type="text" name="entry.252627282" id="g_bondi_cant">
+    <input type="text" name="entry.293031323" id="g_bondi_tipo">
+    <input type="text" name="entry.333435363" id="g_bondi_monto">
+    <input type="text" name="entry.373839404" id="g_saldo_final">
+</form>
+
 <header class="main-header">
     <h1>¿Cuánto cuesta vivir en Santa Fe?</h1>
     <p>Desde Comunidad relevamos los aumentos en tarifas, prepagas y el precio de los alquileres en Santa Fe. Con esos datos, diseñamos esta calculadora.</p>
@@ -254,11 +275,11 @@
 </div>
 
 <script>
-    // Variable global de control declarada explícitamente para evitar ReferenceError en el onload del iframe
+    // Inicialización global explícita y unificada de variables críticas
     let submitted = false;
     let currentMode = 'wa';
 
-    // LÓGICA FORMULARIO CONTACTO
+    // LÓGICA FORMULARIO CONTACTO (Boletines Informes)
     function setFormMode(mode) {
         currentMode = mode;
         const container = document.getElementById('fieldsContainer');
@@ -432,43 +453,27 @@
             document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
         }
 
-        // Marca de identificación temporal local para el Sheets
-        const idCalculo = new Date().toLocaleString('es-AR');
+        // 1. Mapeo de marcas locales e inyección de datos calculados al formulario HTML nativo oculto
+        document.getElementById('g_id').value = new Date().toLocaleString('es-AR');
+        document.getElementById('g_perfil').value = tipoIngresoTexto;
+        document.getElementById('g_ingreso').value = ingreso;
+        document.getElementById('g_alquiler').value = document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text;
+        document.getElementById('g_tarifas').value = document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text;
+        document.getElementById('g_salud').value = document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text;
+        document.getElementById('g_monotributo').value = document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text;
+        document.getElementById('g_mueve_vehi').value = (vehiculoTipo === "no") ? "No" : (vehiculoTipo === "moto" ? "Sí, en moto" : "Sí, en auto");
+        document.getElementById('g_nafta_litros').value = naftaLitros;
+        document.getElementById('g_nafta_monto').value = naftaCostoTotal;
+        document.getElementById('g_seom_monto').value = seomMonto;
+        document.getElementById('g_mueve_bondi').value = usaBondi ? "Sí" : "No";
+        document.getElementById('g_bondi_cant').value = colectivoCant;
+        document.getElementById('g_bondi_tipo').value = usaBondi ? colectivoTipoTexto : "";
+        document.getElementById('g_bondi_monto').value = gastosBondi;
+        document.getElementById('g_saldo_final').value = saldo;
 
-        // Mapeo textual de las opciones de selección única
-        const alquilerTexto = document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text;
-        const tarifasTexto = document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text;
-        const saludTexto = document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text;
-        const monotributoTexto = document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text;
+        // 2. Disparar el envío clásico del formulario a través del navegador
+        document.getElementById('calculatorGoogleForm').submit();
 
-        let vehiculoTexto = "No";
-        if (vehiculoTipo === "moto") vehiculoTexto = "Sí, en moto";
-        if (vehiculoTipo === "auto") vehiculoTexto = "Sí, en auto";
-
-        // URL definitiva basada en la clave e ID real del nuevo formulario de respuestas cortas
-        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSd1LagvHkPQoveNaDk2oKnfpFROkNrwudw2gorUCnp8tpI/formResponse";
-        
-        // Uso obligatorio de URLSearchParams para forzar codificación application/x-www-form-urlencoded
-        const formData = new URLSearchParams();
-        
-        formData.append("entry.449757659", idCalculo);
-        formData.append("entry.480031175", tipoIngresoTexto);
-        formData.append("entry.685311029", ingreso);
-        formData.append("entry.1491295982", alquilerTexto);
-        formData.append("entry.353347587", tarifasTexto);
-        formData.append("entry.1017992928", saludTexto);
-        formData.append("entry.1030018512", monotributoTexto);
-        formData.append("entry.1595186001", vehiculoTexto);
-        formData.append("entry.1541334969", naftaLitros);
-        formData.append("entry.1705607063", naftaCostoTotal);
-        formData.append("entry.1982701193", seomMonto);
-        formData.append("entry.1352726615", usaBondi ? "Sí" : "No");
-        formData.append("entry.1764669811", colectivoCant);
-        formData.append("entry.206689255", usaBondi ? colectivoTipoTexto : "");
-        formData.append("entry.887265113", gastosBondi);
-        formData.append("entry.1802956799", saldo);
-
-        fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
         document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
     }
 
