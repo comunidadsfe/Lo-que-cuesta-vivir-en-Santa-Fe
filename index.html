@@ -354,8 +354,12 @@
         }
     }
 
+    // Corregida función rota de colectivo
     function toggleBondi() {
-        document.getElementById('seccion_bondi').style.display = document.getElementById('mueve_bondi').value === 'si' ? 'block' : 'none';
+        const seccionBondi = document.getElementById('seccion_bondi');
+        if (seccionBondi) {
+            seccionBondi.style.display = document.getElementById('mueve_bondi').value === 'si' ? 'block' : 'none';
+        }
     }
 
     function calcular() {
@@ -445,6 +449,7 @@
         const formURL = "https://docs.google.com/forms/d/1LagvHkPQoveNaDk2oKnfpFROkNrwudw2gorUCnp8tpI/formResponse";
         const formData = new URLSearchParams();
         
+        // Mapeo exacto con los 16 IDs reales de hoy pasados a String plano
         formData.append("entry.668034584", String(idCalculo));
         formData.append("entry.1191741997", String(tipoIngresoTexto));
         formData.append("entry.1685417240", String(ingreso));
@@ -464,6 +469,7 @@
 
         fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
         document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
+    }
 
     async function compartirPlaca() {
         const placa = document.getElementById('placa-resultado');
