@@ -8,7 +8,7 @@
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/logo.jpg?v=2">
     
     <meta property="og:title" content="Comunidad">
-    <meta property="og:description" content="*Trabajar cada vez más para vivir cada vez peor.* Diseñamos una herramienta para calcular cuánto queda de ingresos después de pagar alquiler y servicios básicos. No era la casta, eras vos.">
+    <meta property="og:description" content="Trabajamos cada vez más y vivimos cada vez peor .Usá esta herramienta para saber cuánto gastas.">
     <meta property="og:image" content="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/placa.png">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://comunidadsfe.github.io/Lo-que-cuesta-vivir-en-Santa-Fe/">
@@ -399,10 +399,10 @@
     }
 
     const gastos = parseFloat(document.getElementById('alquiler').value) + 
-                   parseFloat(tarifasVal) + 
-                   parseFloat(document.getElementById('salud').value) + 
-                   parseFloat(document.getElementById('monotributo').value) + 
-                   gastosVehiculo + gastosBondi;
+                    parseFloat(tarifasVal) + 
+                    parseFloat(document.getElementById('salud').value) + 
+                    parseFloat(document.getElementById('monotributo').value) + 
+                    gastosVehiculo + gastosBondi;
     
     const saldo = ingreso - gastos;
     const porc = (saldo / ingreso) * 100;
@@ -439,7 +439,6 @@
     formData.append("entry.1245079105", document.getElementById('mueve_bondi').value === 'si' ? "SÍ" : "NO");
     formData.append("entry.300146095", parseFloat(document.getElementById('colectivo_cant').value) || 0);
     formData.append("entry.893556157", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No aplica");
-    formData.append("entry.905310130", gastosBondi);
     formData.append("entry.484866896", saldo);
 
     fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
