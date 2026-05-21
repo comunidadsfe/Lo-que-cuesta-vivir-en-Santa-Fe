@@ -79,8 +79,8 @@
 <body>
 
 <header class="main-header">
-    <h1>¿Cuánto cuesta vivir en Santa Fe?</h1>
-    <p>Desde Comunidad relevamos los aumentos en tarifas, prepagas y el precio de los alquileres en Santa Fe. Con esos datos, diseñamos esta calculadora.</p>
+    <h1>¿Sabes cuánto te cuesta vivir en Santa Fe?</h1>
+    <p>Desde Comunidad relevamos los aumentos de tarifas, transporte, alquileres y prepagas en Santa Fe. Con esos datos diseñamos esta calculadora para que calcules tus gastos en función de tus ingresos.</p>
     <a href="https://wa.me/?text=https%3A%2F%2Fcomunidadsfe.github.io%2FLo-que-cuesta-vivir-en-Santa-Fe%2F" target="_blank" class="btn-share-top">Compartir herramienta 📱</a>
 </header>
 
@@ -439,6 +439,7 @@
     formData.append("entry.1245079105", document.getElementById('mueve_bondi').value === 'si' ? "SÍ" : "NO");
     formData.append("entry.300146095", parseFloat(document.getElementById('colectivo_cant').value) || 0);
     formData.append("entry.893556157", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No aplica");
+    formData.append("entry.905310130", gastosBondi);
     formData.append("entry.484866896", saldo);
 
     fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
