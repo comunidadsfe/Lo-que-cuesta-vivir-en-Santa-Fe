@@ -88,7 +88,7 @@
     <h2>¿Cuánto te queda de tus ingresos?</h2>
 
     <div class="field">
-        <label>¿Ingresos?</label>
+        <label>Ingresos</label>
         <select id="tipo_ingreso" onchange="toggleIngresoManual()">
             <option value="" disabled selected>Seleccioná tu situación o perfil...</option>
             <option value="manual">Cargar mis ingresos manualmente</option>
@@ -360,7 +360,7 @@
 
     function calcular() {
     const selector = document.getElementById('tipo_ingreso');
-    if (selector.value === "") { alert("Seleccioná una opción en ¿Ingresos?."); return; }
+    if (selector.value === "") { alert("Seleccioná una opción en Ingresos."); return; }
 
     let ingreso = 0;
     let textoContexto = "";
@@ -423,7 +423,7 @@
         document.getElementById('placa-monto').innerText = formato.format(saldo);
     } else {
         document.getElementById('placa-titulo').innerText = "No te alcanza para llegar a fin de mes...";
-        document.getElementById('placa-monto').innerText = formato.format(saldo); // Incluye el signo negativo automáticamente
+        document.getElementById('placa-monto').innerText = formato.format(saldo); 
     }
     document.getElementById('placa-porc').innerText = saldo >= 0 ? "Te queda el " + porc.toFixed(1) + "% de tus ingresos" : "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
 
