@@ -80,12 +80,12 @@
 
 <header class="main-header">
     <h1>¿Sabes cuánto te cuesta vivir en Santa Fe?</h1>
-    <p>Desde Comunidad relevamos los aumentos de tarifas, transporte, alquileres y prepagas en Santa Fe. Con esos datos diseñamos esta calculadora para que calcules tus gastos en función de tus ingresos.</p>
+    <p>Desde Comunidad relevamos los aumentos de tarifas, transporte, alquileres y prepagas en Santa Fe. Con esos datos diseñamos esta herramienta para que calcules tus gastos en función de tus ingresos.</p>
     <a href="https://wa.me/?text=https%3A%2F%2Fcomunidadsfe.github.io%2FLo-que-cuesta-vivir-en-Santa-Fe%2F" target="_blank" class="btn-share-top">Compartir calculadora 📱</a>
 </header>
 
 <div class="container">
-    <h2>¿Cuánto te queda de tus ingresos?</h2>
+    <h2>¿Cuánto te queda de tus ingresos después de estos gastos básicos?</h2>
 
     <div class="field">
         <label>Ingresos</label>
@@ -454,6 +454,7 @@
     fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
     document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
 }
+
 
     async function compartirPlaca() {
         const placa = document.getElementById('placa-resultado');
