@@ -200,7 +200,7 @@
         <div id="placa-titulo" style="font-weight: 800; text-transform: uppercase;"></div>
         <div id="placa-monto" class="placa-monto"></div>
         <div id="placa-porc" style="font-weight: 600; margin-bottom: 20px;"></div>
-        <div class="placa-footer"><div class="placa-creditos">No era la casta, eras vos</div></div>
+        <div class="placa-footer"><div class="placa-creditos" style="text-transform: uppercase; font-weight: 800; font-size: 0.9rem; color: white;"></div></div>
     </div>
 
     <div id="actions-group" class="actions-group">
@@ -363,16 +363,22 @@
     if (selector.value === "") { alert("Seleccioná una opción en ¿Ingresos?."); return; }
 
     let ingreso = 0;
-    let esPreset = false;
     let textoContexto = "";
 
     if (selector.value === 'manual') {
         const ingresoRaw = document.getElementById('ingreso').value.replace(/\./g, "");
         ingreso = parseFloat(ingresoRaw) || 0;
+        textoContexto = "En base a tus ingresos";
     } else {
         ingreso = parseFloat(selector.value);
-        esPreset = true;
-        textoContexto = "En base a: " + selector.options[selector.selectedIndex].text;
+        const textosPresets = {
+            "463174": "En base a una jubilación mínima",
+            "940586": "En base a los Ingresos Promedios (INDEC)",
+            "975000": "En base al Mínimo Garantizado Municipal",
+            "1037205": "En base a un salario docente",
+            "1063650": "En base a un salario de comercio"
+        };
+        textoContexto = textosPresets[selector.value] || "";
     }
 
     const tarifasVal = document.getElementById('tarifas').value;
@@ -410,16 +416,23 @@
     document.getElementById('placa-resultado').style.display = 'block';
     document.getElementById('actions-group').style.display = 'flex';
     
-    document.getElementById('placa-contexto').innerText = esPreset ? textoContexto : "";
+    document.getElementById('placa-contexto').innerText = textoContexto;
     
     if (saldo >= 0) {
-        document.getElementById('placa-titulo').innerText = "Te quedan";
+        document.getElementById('placa-titulo').innerText = "Te quedan para llegar a fin de mes";
         document.getElementById('placa-monto').innerText = formato.format(saldo);
-        document.getElementById('placa-porc').innerText = "Te queda el " + porc.toFixed(1) + "% de tus ingresos";
     } else {
-        document.getElementById('placa-titulo').innerText = "Déficit mensual";
-        document.getElementById('placa-monto').innerText = formato.format(Math.abs(saldo));
-        document.getElementById('placa-porc').innerText = "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
+        document.getElementById('placa-titulo').innerText = "No te alcanza para llegar a fin de mes...";
+        document.getElementById('placa-monto').innerText = formato.format(saldo); // Incluye el signo negativo automáticamente
+    }
+    document.getElementById('placa-porc').innerText = saldo >= 0 ? "Te queda el " + porc.toFixed(1) + "% de tus ingresos" : "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
+
+    // Lógica Footer
+    const footer = document.querySelector('.placa-creditos');
+    if ((porc < 40) || (saldo < 350000)) {
+        footer.innerText = "NO SOS VOS, ES EL MODELO DE POLETTI, PULLARO Y MILEI QUE TE DESORGANIZÓ LA VIDA.";
+    } else {
+        footer.innerText = "¿LLEGÁS A FIN DE MES CON ESTO?";
     }
 
     // ——— ENVÍO A GOOGLE FORMS ———
@@ -439,10 +452,11 @@
     formData.append("entry.1245079105", document.getElementById('mueve_bondi').value === 'si' ? "SÍ" : "NO");
     formData.append("entry.300146095", parseFloat(document.getElementById('colectivo_cant').value) || 0);
     formData.append("entry.893556157", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No aplica");
+    formData.append("entry.905310130", gastosBondi);
     formData.append("entry.484866896", saldo);
 
     fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
-document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
 }
 
 
