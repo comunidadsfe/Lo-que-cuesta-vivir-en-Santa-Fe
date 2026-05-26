@@ -88,7 +88,7 @@
     <h2>¿Cuánto te queda de tus ingresos después de estos gastos básicos?</h2>
 
     <div class="field">
-        <label>Ingresos</label>
+        <label>Ingresos (individual o familiar)</label>
         <select id="tipo_ingreso" onchange="toggleIngresoManual()">
             <option value="" disabled selected>Seleccioná tu situación o perfil...</option>
             <option value="manual">Cargar mis ingresos manualmente</option>
@@ -117,15 +117,14 @@
         </select>
     </div>
 
-    <!-- NUEVO ÍTEM: CANASTA BÁSICA -->
     <div class="field">
-        <label>Canasta Básica Alimentaria INDEC</label>
+        <label>Canasta Básica Alimentaria (INDEC)</label>
         <select id="canasta_basica">
-            <option value="0">No contemplar</option>
-            <option value="215228">Un adulto ($215.228)</option>
-            <option value="529460">Un adulto con dos hijos ($529.460)</option>
-            <option value="665053">Una pareja con dos hijos ($665.053)</option>
-            <option value="699490">Una pareja con tres hijos ($699.490)</option>
+            <option value="0">Elegir</option>
+            <option value="215228">Un adulto</option>
+            <option value="529460">Un adulto con dos hijos</option>
+            <option value="665053">Una pareja con dos hijos</option>
+            <option value="699490">Una pareja con tres hijos</option>
         </select>
     </div>
 
@@ -369,108 +368,107 @@
     }
 
     function calcular() {
-    const selector = document.getElementById('tipo_ingreso');
-    if (selector.value === "") { alert("Seleccioná una opción en Ingresos."); return; }
+        const selector = document.getElementById('tipo_ingreso');
+        if (selector.value === "") { alert("Seleccioná una opción en Ingresos."); return; }
 
-    let ingreso = 0;
-    let textoContexto = "";
+        let ingreso = 0;
+        let textoContexto = "";
 
-    if (selector.value === 'manual') {
-        const ingresoRaw = document.getElementById('ingreso').value.replace(/\./g, "");
-        ingreso = parseFloat(ingresoRaw) || 0;
-        textoContexto = "En base a tus ingresos";
-    } else {
-        ingreso = parseFloat(selector.value);
-        const textosPresets = {
-            "463174": "En base a una jubilación mínima",
-            "940586": "En base a los Ingresos Promedios (INDEC)",
-            "975000": "En base al Mínimo Garantizado Municipal",
-            "1037205": "En base a un salario docente",
-            "1063650": "En base a un salario de comercio"
-        };
-        textoContexto = textosPresets[selector.value] || "";
-    }
-
-    const tarifasVal = document.getElementById('tarifas').value;
-    const canastaVal = document.getElementById('canasta_basica').value;
-    
-    if (ingreso <= 0) { alert("Ingresá tus ingresos mensuales."); return; }
-    if (tarifasVal === "") { alert("Seleccioná una opción de tarifas."); return; }
-
-    let gastosVehiculo = 0;
-    let naftaLitros = 0;
-    let seomMonto = 0;
-    const vehiculoTipo = document.getElementById('mueve_vehiculo').value;
-
-    if (vehiculoTipo !== 'no') {
-        naftaLitros = parseFloat(document.getElementById('nafta').value) || 0;
-        const naftaCosto = naftaLitros * 2087;
-        if (vehiculoTipo === 'auto') {
-            seomMonto = parseFloat(document.getElementById('seom').value.replace(/\./g, "")) || 0;
+        if (selector.value === 'manual') {
+            const ingresoRaw = document.getElementById('ingreso').value.replace(/\./g, "");
+            ingreso = parseFloat(ingresoRaw) || 0;
+            textoContexto = "En base a tus ingresos";
+        } else {
+            ingreso = parseFloat(selector.value);
+            const textosPresets = {
+                "463174": "En base a una jubilación mínima",
+                "940586": "En base a los Ingresos Promedios (INDEC)",
+                "975000": "En base al Mínimo Garantizado Municipal",
+                "1037205": "En base a un salario docente",
+                "1063650": "En base a un salario de comercio"
+            };
+            textoContexto = textosPresets[selector.value] || "";
         }
-        gastosVehiculo = naftaCosto + seomMonto;
+
+        const canastaVal = parseFloat(document.getElementById('canasta_basica').value) || 0;
+        const tarifasVal = parseFloat(document.getElementById('tarifas').value) || 0;
+        
+        if (ingreso <= 0) { alert("Ingresá tus ingresos mensuales."); return; }
+        if (document.getElementById('tarifas').value === "") { alert("Seleccioná una opción de tarifas."); return; }
+
+        let gastosVehiculo = 0;
+        let naftaLitros = 0;
+        let seomMonto = 0;
+        const vehiculoTipo = document.getElementById('mueve_vehiculo').value;
+
+        if (vehiculoTipo !== 'no') {
+            naftaLitros = parseFloat(document.getElementById('nafta').value) || 0;
+            const naftaCosto = naftaLitros * 2087;
+            if (vehiculoTipo === 'auto') {
+                seomMonto = parseFloat(document.getElementById('seom').value.replace(/\./g, "")) || 0;
+            }
+            gastosVehiculo = naftaCosto + seomMonto;
+        }
+
+        let gastosBondi = 0;
+        if (document.getElementById('mueve_bondi').value === 'si') {
+            gastosBondi = (parseFloat(document.getElementById('colectivo_cant').value) || 0) * parseFloat(document.getElementById('colectivo_tipo').value);
+        }
+
+        const gastos = parseFloat(document.getElementById('alquiler').value) + 
+                       canastaVal +
+                       tarifasVal + 
+                       parseFloat(document.getElementById('salud').value) + 
+                       parseFloat(document.getElementById('monotributo').value) + 
+                       gastosVehiculo + gastosBondi;
+        
+        const saldo = ingreso - gastos;
+        const porc = (saldo / ingreso) * 100;
+        
+        document.getElementById('placa-resultado').style.display = 'block';
+        document.getElementById('actions-group').style.display = 'flex';
+        
+        document.getElementById('placa-contexto').innerText = textoContexto;
+        
+        if (saldo >= 0) {
+            document.getElementById('placa-titulo').innerText = "Te quedan para llegar a fin de mes";
+            document.getElementById('placa-monto').innerText = formato.format(saldo);
+        } else {
+            document.getElementById('placa-titulo').innerText = "No te alcanza para llegar a fin de mes...";
+            document.getElementById('placa-monto').innerText = formato.format(saldo); 
+        }
+        document.getElementById('placa-porc').innerText = saldo >= 0 ? "Te queda el " + porc.toFixed(1) + "% de tus ingresos" : "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
+
+        const footer = document.querySelector('.placa-creditos');
+        if ((porc < 40) || (saldo < 550000)) {
+            footer.innerText = "NO SOS VOS, ES EL MODELO DE POLETTI, PULLARO Y MILEI QUE TE DESORGANIZÓ LA VIDA.";
+        } else {
+            footer.innerText = "AUNQUE TUS INGRESOS TE ALCANCEN, CON ESTE MODELO ES MUY DIFÍCIL QUE EL LABURANTE PROGRESE";
+        }
+
+        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSf10sjhc3sqswcC3dbHmoGV_u16KQ61puIsik-IPwwMGdXaeQ/formResponse";
+        const formData = new FormData();
+
+        formData.append("entry.668034584", new Date().toLocaleString('es-AR'));
+        formData.append("entry.1191741997", ingreso);
+        formData.append("entry.1685417240", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
+        formData.append("entry.1983050000", document.getElementById('canasta_basica').options[document.getElementById('canasta_basica').selectedIndex].text);
+        formData.append("entry.719316164", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
+        formData.append("entry.1909112986", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
+        formData.append("entry.68412020", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
+        formData.append("entry.1885204949", vehiculoTipo.toUpperCase());
+        formData.append("entry.332861644", naftaLitros);
+        formData.append("entry.1698485502", naftaLitros * 2087);
+        formData.append("entry.1639785983", seomMonto);
+        formData.append("entry.1245079105", document.getElementById('mueve_bondi').value === 'si' ? "SÍ" : "NO");
+        formData.append("entry.300146095", parseFloat(document.getElementById('colectivo_cant').value) || 0);
+        formData.append("entry.893556157", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No aplica");
+        formData.append("entry.905310130", gastosBondi);
+        formData.append("entry.484866896", saldo);
+
+        fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
+        document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
     }
-
-    let gastosBondi = 0;
-    if (document.getElementById('mueve_bondi').value === 'si') {
-        gastosBondi = (parseFloat(document.getElementById('colectivo_cant').value) || 0) * parseFloat(document.getElementById('colectivo_tipo').value);
-    }
-
-    const gastos = parseFloat(document.getElementById('alquiler').value) + 
-                    parseFloat(canastaVal) +
-                    parseFloat(tarifasVal) + 
-                    parseFloat(document.getElementById('salud').value) + 
-                    parseFloat(document.getElementById('monotributo').value) + 
-                    gastosVehiculo + gastosBondi;
-    
-    const saldo = ingreso - gastos;
-    const porc = (saldo / ingreso) * 100;
-    
-    document.getElementById('placa-resultado').style.display = 'block';
-    document.getElementById('actions-group').style.display = 'flex';
-    
-    document.getElementById('placa-contexto').innerText = textoContexto;
-    
-    if (saldo >= 0) {
-        document.getElementById('placa-titulo').innerText = "Te quedan para llegar a fin de mes";
-        document.getElementById('placa-monto').innerText = formato.format(saldo);
-    } else {
-        document.getElementById('placa-titulo').innerText = "No te alcanza para llegar a fin de mes...";
-        document.getElementById('placa-monto').innerText = formato.format(saldo); 
-    }
-    document.getElementById('placa-porc').innerText = saldo >= 0 ? "Te queda el " + porc.toFixed(1) + "% de tus ingresos" : "Tus gastos superan tus ingresos en un " + Math.abs(porc).toFixed(1) + "%";
-
-    const footer = document.querySelector('.placa-creditos');
-    if ((porc < 40) || (saldo < 550000)) {
-        footer.innerText = "NO SOS VOS, ES EL MODELO DE POLETTI, PULLARO Y MILEI QUE TE DESORGANIZÓ LA VIDA.";
-    } else {
-        footer.innerText = "AUNQUE TUS INGRESOS TE ALCANCEN, CON ESTE MODELO ES MUY DIFÍCIL QUE EL LABURANTE PROGRESE";
-    }
-
-    const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSf10sjhc3sqswcC3dbHmoGV_u16KQ61puIsik-IPwwMGdXaeQ/formResponse";
-    const formData = new FormData();
-
-    formData.append("entry.668034584", new Date().toLocaleString('es-AR'));
-    formData.append("entry.1191741997", ingreso);
-    formData.append("entry.1685417240", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
-    formData.append("entry.1983050000", document.getElementById('canasta_basica').options[document.getElementById('canasta_basica').selectedIndex].text);
-    formData.append("entry.719316164", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
-    formData.append("entry.1909112986", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
-    formData.append("entry.68412020", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
-    formData.append("entry.1885204949", vehiculoTipo.toUpperCase());
-    formData.append("entry.332861644", naftaLitros);
-    formData.append("entry.1698485502", naftaLitros * 2087);
-    formData.append("entry.1639785983", seomMonto);
-    formData.append("entry.1245079105", document.getElementById('mueve_bondi').value === 'si' ? "SÍ" : "NO");
-    formData.append("entry.300146095", parseFloat(document.getElementById('colectivo_cant').value) || 0);
-    formData.append("entry.893556157", document.getElementById('mueve_bondi').value === 'si' ? document.getElementById('colectivo_tipo').options[document.getElementById('colectivo_tipo').selectedIndex].text : "No aplica");
-    formData.append("entry.905310130", gastosBondi);
-    formData.append("entry.484866896", saldo);
-
-    fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
-    document.getElementById('placa-resultado').scrollIntoView({ behavior: 'smooth' });
-}
-
 
     async function compartirPlaca() {
         const placa = document.getElementById('placa-resultado');
