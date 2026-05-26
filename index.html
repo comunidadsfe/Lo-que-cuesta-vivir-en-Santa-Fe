@@ -119,15 +119,16 @@
 
     <div class="field">
         <label>Canasta Básica Alimentaria (INDEC)</label>
-        <select id="canasta_basica">
+        <select id="canasta_basica" onchange="toggleFuenteCanasta()">
             <option value="0">Elegir</option>
             <option value="215228">Una persona</option>
             <option value="430456">Dos personas</option>
             <option value="529460">Tres personas</option>
             <option value="665053">Cuatro personas</option>
             <option value="699490">Cinco personas</option>
-            <option value="699940">Seis Personas o más</option>
+            <option value="699940">Seis personas o más</option>
         </select>
+        <div id="fuente_canasta" class="nota-aclaratoria" style="display: none; margin-top: 8px; font-weight: 600;">* Línea de Indigencia, INDEC, Abril 2026.</div>
     </div>
 
     <div class="field">
@@ -342,6 +343,12 @@
             contenedorManual.style.display = 'none';
             divFuente.style.display = 'none';
         }
+    }
+
+    function toggleFuenteCanasta() {
+        const selector = document.getElementById('canasta_basica');
+        const divFuente = document.getElementById('fuente_canasta');
+        divFuente.style.display = (selector.value !== '0') ? 'block' : 'none';
     }
 
     const formato = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
