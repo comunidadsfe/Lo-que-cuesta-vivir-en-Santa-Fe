@@ -4,15 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
-                e.preventDefault();
-            }
-        });
-    </script>
-    
     <title>Comunidad | Santa Fe</title>
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/logo.jpg?v=2">
     
@@ -123,6 +114,18 @@
             <option value="600000">2 ambientes</option>
             <option value="700000">3 ambientes</option>
             <option value="830000">4 ambientes</option>
+        </select>
+    </div>
+
+    <!-- NUEVO ÍTEM: CANASTA BÁSICA -->
+    <div class="field">
+        <label>Canasta Básica Alimentaria INDEC</label>
+        <select id="canasta_basica">
+            <option value="0">No contemplar</option>
+            <option value="215228">Un adulto ($215.228)</option>
+            <option value="529460">Un adulto con dos hijos ($529.460)</option>
+            <option value="665053">Una pareja con dos hijos ($665.053)</option>
+            <option value="699490">Una pareja con tres hijos ($699.490)</option>
         </select>
     </div>
 
@@ -389,6 +392,8 @@
     }
 
     const tarifasVal = document.getElementById('tarifas').value;
+    const canastaVal = document.getElementById('canasta_basica').value;
+    
     if (ingreso <= 0) { alert("Ingresá tus ingresos mensuales."); return; }
     if (tarifasVal === "") { alert("Seleccioná una opción de tarifas."); return; }
 
@@ -412,6 +417,7 @@
     }
 
     const gastos = parseFloat(document.getElementById('alquiler').value) + 
+                    parseFloat(canastaVal) +
                     parseFloat(tarifasVal) + 
                     parseFloat(document.getElementById('salud').value) + 
                     parseFloat(document.getElementById('monotributo').value) + 
@@ -447,6 +453,7 @@
     formData.append("entry.668034584", new Date().toLocaleString('es-AR'));
     formData.append("entry.1191741997", ingreso);
     formData.append("entry.1685417240", document.getElementById('alquiler').options[document.getElementById('alquiler').selectedIndex].text);
+    formData.append("entry.1983050000", document.getElementById('canasta_basica').options[document.getElementById('canasta_basica').selectedIndex].text);
     formData.append("entry.719316164", document.getElementById('tarifas').options[document.getElementById('tarifas').selectedIndex].text);
     formData.append("entry.1909112986", document.getElementById('salud').options[document.getElementById('salud').selectedIndex].text);
     formData.append("entry.68412020", document.getElementById('monotributo').options[document.getElementById('monotributo').selectedIndex].text);
